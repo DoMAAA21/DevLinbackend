@@ -258,6 +258,38 @@ exports.allUsers = async (req, res, next) => {
     });
   };
 
+  exports.registerUser = async (req, res, next) => {
+    const result = await cloudinary.uploader.upload(req.body.avatar, {
+        folder: 'avatars',
+        width: 150,
+        crop: "scale"
+    }, (err, res) => {
+          console.log(err, res);
+      });
+    // return console.log(result)
+	const { name, 
+        email, 
+        password, 
+        
+     } = req.body;
+	 const user = await User.create({
+        name,
+        email,
+        password,
+        avatar: {
+            public_id: result.public_id,
+            url: result.secure_url
+        }
+		
+        // avatar: {
+        //     public_id: 'avatars/oqqqt5immgammiknebvc',
+        //     url: 'https://res.cloudinary.com/dgneiaky7/image/upload/v1649422734/avatars/oqqqt5immgammiknebvc.png'
+        // }
+    })
+	
+	 sendToken(user, 200, res)
+};
+
   exports.updateProfile = async (req, res, next) => {
 
     console.log(req.body)

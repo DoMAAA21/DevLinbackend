@@ -16,7 +16,7 @@ const findOrCreate = require("mongoose-findorcreate");
 
 
 const {
-//   registerUser,
+  registerUser,
 
   loginUser,
 
@@ -79,7 +79,7 @@ router.put(
 
 router.get("/me", isAuthenticatedUser, getUserProfile);
 
-// router.post("/register", upload.single("avatar"), registerUser);
+router.post("/register", upload.single("avatar"), registerUser);
 
 router.post("/login", loginUser);
 
