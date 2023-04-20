@@ -152,6 +152,7 @@ exports.updateOrder = async (req, res, next) => {
     const order = await Order.findById(req.params.id)
 
 
+    console.log(res)
 
     if (order.orderStatus === 'Delivered') {
 
@@ -216,7 +217,7 @@ exports.deleteOrder = async (req, res, next) => {
 
 
 
-    await order.remove()
+    await order.deleteOne()
 
 
 
