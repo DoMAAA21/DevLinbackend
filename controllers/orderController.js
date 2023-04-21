@@ -229,4 +229,164 @@ exports.deleteOrder = async (req, res, next) => {
 
 }
 
+exports.totalOrders = async (req, res, next) => {
+    const totalOrders = await Order.aggregate([
+        {
+            $group: {
+                _id: null,
+                count: { $sum: 1 }
+            }
+        }
+    ])
+    if (!totalOrders) {
+        return next(new ErrorHandler('error total orders', 404))
+
+    }
+    res.status(200).json({
+        success: true,
+        totalOrders
+    })
+
+}
+
+exports.totalSales = async (req, res, next) => {
+    const totalSales = await Order.aggregate([
+        {
+            $group: {
+                _id: null,
+                total: { $sum: "$totalPrice" }
+            }
+        }
+    ])
+    if (!totalSales) {
+        return next(new ErrorHandler('error total saless', 404))
+
+    }
+    res.status(200).json({
+        success: true,
+        totalSales
+    })
+
+}
+
+exports.customerSales = async (req, res, next) => {
+    const customerSales = await Order.aggregate([
+
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'userDetails'
+            },
+        },
+
+        // {
+        //     $group: {
+        //        _id: "$user",
+        //        total: { $sum: "$totalPrice" },
+
+
+        //     }
+        //   },
+
+        { $unwind: "$userDetails" },
+
+        {
+            $group: {
+                _id: "$user",
+                total: { $sum: "$totalPrice" },
+                doc: { "$first": "$$ROOT" },
+
+            }
+        },
+
+        {
+            $replaceRoot: {
+                newRoot: { $mergeObjects: [{ total: '$total' }, '$doc'] },
+            },
+        },
+        // {
+        //     $group: {
+        //         _id: "$userDetails.name",
+        //         total: { $sum: "$totalPrice" }
+        //     }
+        // },
+        { $sort: { total: -1 } },
+        {
+            $project: {
+                _id: 0,
+                "userDetails.name": 1,
+                total: 1,
+
+            }
+        }
+
+    ])
+    if (!customerSales) {
+        return next(new ErrorHandler('error customer sales', 404))
+
+    }
+    // return console.log(customerSales)
+    res.status(200).json({
+        success: true,
+        customerSales
+    })
+
+}
+
+exports.salesPerMonth = async (req, res, next) => {
+    const salesPerMonth = await Order.aggregate([
+        {
+            $group: {
+                // _id: {month: { $month: "$paidAt" } },
+                _id: { year: { $year: "$paidAt" }, month: { $month: "$paidAt" } },
+                total: { $sum: "$totalPrice" },
+            },
+        },
+
+        {
+            $addFields: {
+                month: {
+                    $let: {
+                        vars: {
+                            monthsInString: [, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', ' Sept', 'Oct', 'Nov', 'Dec']
+                        },
+                        in: {
+                            $arrayElemAt: ['$$monthsInString', "$_id.month"]
+                        }
+                    }
+                }
+            }
+        },
+        { $sort: { "_id.month": 1 } },
+        {
+            $project: {
+                _id: 1,
+                month: 1,
+               
+                total: 1,
+
+            }
+        }
+
+    ])
+    if (!salesPerMonth) {
+        return next(new ErrorHandler('error sales per month', 404))
+
+    }
+    // return console.log(customerSales)
+    res.status(200).json({
+        success: true,
+        salesPerMonth
+    })
+
+}
+
+async function updateStock(id, quantity) {
+    const product = await Product.findById(id);
+    product.stock = product.stock - quantity;
+    await product.save({ validateBeforeSave: false })
+}
+
 

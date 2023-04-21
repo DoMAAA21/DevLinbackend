@@ -19,7 +19,8 @@ const {
   createProductReview,
   getProductReviews,
   getAdminProducts,
-  deleteReview
+  deleteReview,
+  productSales
 } = require("../controllers/productController");
 
 router.get("/products",getProducts);
@@ -53,5 +54,6 @@ router
   .route("/admin/product/:id")
   // .put( updateProduct)
   .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteProduct);
+router.get('/admin/products/sales', productSales);
 
 module.exports = router;

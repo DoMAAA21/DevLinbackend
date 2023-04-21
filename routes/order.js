@@ -5,16 +5,15 @@ const express = require('express')
 const router = express.Router();
 
 const { newOrder,
-
     getSingleOrder,
-
     myOrders,
-
     allOrders,
-
     updateOrder,
-
-    deleteOrder
+    deleteOrder,
+    totalOrders,
+		totalSales,
+		customerSales,
+		salesPerMonth,
 
 } = require('../controllers/orderController')
 
@@ -29,5 +28,8 @@ router.route('/orders/me').get(isAuthenticatedUser, myOrders);
 
 router.route('/admin/orders/').get(isAuthenticatedUser, authorizeRoles('admin'), allOrders);
 router.route('/admin/order/:id').put(isAuthenticatedUser, authorizeRoles('admin'), updateOrder).delete(isAuthenticatedUser, authorizeRoles('admin'), deleteOrder);
-
+router.get('/orders/total-orders', totalOrders);
+router.get('/orders/total-sales', totalSales);
+router.get('/orders/customer-sales', customerSales);
+router.get('/orders/sales-per-month', salesPerMonth);
 module.exports = router;
