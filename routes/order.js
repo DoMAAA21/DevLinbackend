@@ -14,6 +14,7 @@ const { newOrder,
 		totalSales,
 		customerSales,
 		salesPerMonth,
+    servicenewOrder
 
 } = require('../controllers/orderController')
 
@@ -22,6 +23,7 @@ const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth')
 
 
 router.route('/order/new').post( newOrder);
+router.route('/serviceorder/new').post( servicenewOrder);
 router.route('/order/:id').get(isAuthenticatedUser, getSingleOrder);
 
 router.route('/orders/me').get(isAuthenticatedUser, myOrders);

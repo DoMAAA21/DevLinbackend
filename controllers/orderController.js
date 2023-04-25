@@ -74,6 +74,69 @@ exports.newOrder = async (req, res, next) => {
 }
 
 
+exports.servicenewOrder = async (req, res, next) => {
+
+    //  console.log(req.user)
+
+    const {
+
+        orderItems,
+
+        shippingInfo,
+
+        itemsPrice,
+
+        taxPrice,
+
+        shippingPrice,
+
+        totalPrice,
+
+        paymentInfo,
+        // user
+
+
+
+    } = req.body;
+
+
+
+    const order = await Order.create({
+
+        orderItems,
+
+        shippingInfo,
+
+        itemsPrice,
+
+        taxPrice,
+
+        shippingPrice,
+
+        totalPrice,
+
+        paymentInfo,
+        type: 'Service',
+        paidAt: Date.now(),
+       
+
+        user: req.body.userid
+        
+        
+
+    })
+
+
+
+    res.status(200).json({
+
+        success: true,
+
+        order
+
+    })
+
+}
 exports.getSingleOrder = async (req, res, next) => {
 
     const order = await Order.findById(req.params.id).populate('user', 'name email')
@@ -160,13 +223,16 @@ exports.updateOrder = async (req, res, next) => {
 
     }
 
+    console.log(order.type)
 
-
+    if(!order.type || order.type != 'Service'){
     order.orderItems.forEach(async item => {
 
         await updateStock(item.product, item.quantity)
 
     })
+    }
+
 
 
 
@@ -384,6 +450,7 @@ exports.salesPerMonth = async (req, res, next) => {
 }
 
 async function updateStock(id, quantity) {
+   
     const product = await Product.findById(id);
     product.stock = product.stock - quantity;
     await product.save({ validateBeforeSave: false })

@@ -74,7 +74,8 @@ const orderSchema = mongoose.Schema({
 
                 type: Number,
 
-                required: true
+                required: true,
+                default : 1
 
             },
 
@@ -98,11 +99,12 @@ const orderSchema = mongoose.Schema({
 
                 type: mongoose.Schema.Types.ObjectId,
 
-                required: true,
+                required: false,
 
                 ref: 'Product'
 
             }
+            
 
         }
 
@@ -169,6 +171,15 @@ const orderSchema = mongoose.Schema({
         required: true,
 
         default: 0.0
+
+    },
+    type: {
+
+        type: String,
+
+        required: true,
+
+        default: 'Order'
 
     },
 

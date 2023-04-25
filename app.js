@@ -11,6 +11,7 @@ const auth = require("./routes/auth");
 const errorMiddleware = require("./middlewares/error");
 const product = require("./routes/product");
 const order = require("./routes/order");
+const service = require("./routes/service");
 
 
 // const session = require("express-session");
@@ -85,25 +86,26 @@ app.use(cookieParser());
 app.use("/api/v1", auth);
 app.use("/api/v1", product);
 app.use('/api/v1', order);
+app.use('/api/v1', service);
 app.use(errorMiddleware);
 
 
-app.get("/auth/google",
-  passport.authenticate("google", { scope:
-  	[ 'email', 'profile' ] })
-);
-app.get("/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://localhost:3000" }),
-  function(req, res) {
-    // Successful authentication, redirect secrets.
+// app.get("/auth/google",
+//   passport.authenticate("google", { scope:
+//   	[ 'email', 'profile' ] })
+// );
+// app.get("/auth/google/callback",
+//   passport.authenticate("google", { failureRedirect: "http://localhost:3000" }),
+//   function(req, res) {
+//     // Successful authentication, redirect secrets.
 
     
-    res.redirect("http://localhost:3000");
-  }
-);
+//     res.redirect("http://localhost:3000");
+//   }
+// );
 
-app.get("/logout", function(req, res){
-  res.redirect("http://localhost:3000/");
-});
+// app.get("/logout", function(req, res){
+//   res.redirect("http://localhost:3000/");
+// });
 
 module.exports = app;
