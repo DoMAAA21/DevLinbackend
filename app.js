@@ -76,9 +76,9 @@ const cors = require('cors');
 
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    // origin: 'http://localhost:3000',
  
-    // origin: "https://localhost:3000",
+    origin: "https://devlin.onrender.com",
     credentials: true}));
 app.use(express.json());
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
